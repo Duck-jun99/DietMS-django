@@ -39,7 +39,7 @@ SECRET_KEY = get_secret("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '192.168.0.110', 'sksmschl.pythonanywhere.com']
+ALLOWED_HOSTS = ['localhost', '192.168.0.110', 'sksmschl.pythonanywhere.com', '192.168.0.102']
 
 
 # Application definition
@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'blog',
     'rest_framework',
     'rest_framework.authtoken',
+    'accounts',
 ]
 
 REST_FRAMEWORK = {
@@ -149,3 +150,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media/" 
+
+AUTH_USER_MODEL = 'accounts.User'

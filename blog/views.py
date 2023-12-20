@@ -5,12 +5,58 @@ from .models import Post
 from django.shortcuts import render, get_object_or_404, redirect
 from rest_framework import viewsets
 from .serializers import PostSerializer
+from django.http import JsonResponse
 
 # Create your views here.
 
 def post_list(request):
     posts = Post.objects.all().order_by('published_date')
     return render(request, 'blog/post_list.html', {'posts': posts})
+
+def post_today(request):
+    today = timezone.now().date()
+    posts_today = Post.objects.filter(published_date__date=today).order_by('published_date')
+    
+    return render(request, 'blog/post_list.html', {'posts': posts_today})
+
+def post_not_today(request):
+    today = timezone.now().date()
+    posts_not_today = Post.objects.exclude(published_date__date=today).order_by('published_date')
+    
+    return render(request, 'blog/post_list.html', {'posts': posts_not_today})
+    
+
+def post_today_app(request):
+    today = timezone.now().date()
+    posts_today = Post.objects.filter(published_date__date=today).order_by('published_date')
+    data = []
+    for post in posts_today:
+        post_data = {
+            'title': post.title,
+            'text': post.text,
+            'created_date': post.created_date,
+            'image': post.image.url if post.image else None,  # 이미지 URL 사용 (이미지가 없을 경우 None)
+            'meal': post.meal,
+        }
+        data.append(post_data)
+
+    return JsonResponse(data, safe=False)
+    
+def post_not_today_app(request):
+    today = timezone.now().date()
+    posts_not_today = Post.objects.exclude(published_date__date=today).order_by('published_date')
+    data = []
+    for post in posts_not_today:
+        post_data = {
+            'title': post.title,
+            'text': post.text,
+            'created_date': post.created_date,
+            'image': post.image.url if post.image else None,  # 이미지 URL 사용 (이미지가 없을 경우 None)
+            'meal': post.meal,
+        }
+        data.append(post_data)
+
+    return JsonResponse(data, safe=False)
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
